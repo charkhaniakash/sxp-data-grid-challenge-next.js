@@ -13,14 +13,17 @@
     "@emotion/styled": "^11.14.0",
     "@mui/material": "^6.4.3",
     "@mui/x-data-grid": "^7.26.0",
+    "@types/file-saver": "^2.0.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "file-saver": "^2.0.5",
     "lucide-react": "^0.475.0",
     "next": "15.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.1",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

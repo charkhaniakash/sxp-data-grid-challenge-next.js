@@ -5,9 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Settings } from "lucide-react"
 import type { DataGridProps } from "../types/grid"
 import { useGridState } from "../hooks/useGridState"
+import * as XLSX from "xlsx"
+import FileSaver from "file-saver"
 
 export function DataGrid({ data, columns, defaultRowsPerPage = 20 }: DataGridProps) {
   const { state, updateState } = useGridState(columns)
@@ -18,7 +21,8 @@ export function DataGrid({ data, columns, defaultRowsPerPage = 20 }: DataGridPro
     if (!state.sortBy) return data
 
     return [...data].sort((a, b) => {
-      const { id, desc } = state.sortBy
+      const { id, desc } = state.sortBy ?? { id: '', desc: false };
+
       const aValue = a[id]
       const bValue = b[id]
 
@@ -44,38 +48,73 @@ export function DataGrid({ data, columns, defaultRowsPerPage = 20 }: DataGridPro
 
   const pageCount = Math.ceil(filteredData.length / state.rowsPerPage)
 
+  const exportData = (format: "csv" | "xlsx") => {
+    const exportData = filteredData.map((row) =>
+      visibleColumns.reduce(
+        (acc, column) => ({
+          ...acc,
+          [column.header]: row[column.accessorKey],
+        }),
+        {},
+      ),
+    )
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData)
+    const workbook = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1")
+
+    const excelBuffer = XLSX.write(workbook, { bookType: format, type: "array" })
+    const data = new Blob([excelBuffer], {
+      type:
+        format === "csv"
+          ? "text/csv;charset=utf-8"
+          : "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8",
+    })
+    FileSaver.saveAs(data, `export.${format}`)
+  }
+
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between space-x-2">
         <Input
           placeholder="Search..."
           value={state.searchQuery}
           onChange={(e: { target: { value: any } }) => updateState({ searchQuery: e.target.value })}
           className="max-w-sm"
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" size="icon">
-              <Settings className="h-4 w-4" />
+        <div className="flex items-center space-x-2">
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => exportData("csv")}>
+              Export CSV
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {columns.map((column) => (
-              <DropdownMenuItem
-                key={column.id}
-                onSelect={() => {
-                  const hiddenColumns = state.hiddenColumns.includes(column.id)
-                    ? state.hiddenColumns.filter((id: string) => id !== column.id)
-                    : [...state.hiddenColumns, column.id]
-                  updateState({ hiddenColumns })
-                }}
-              >
-                <input type="checkbox" checked={!state.hiddenColumns.includes(column.id)} className="mr-2" readOnly />
-                {column.header}
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+            <Button variant="outline" onClick={() => exportData("xlsx")}>
+              Export Excel
+            </Button>
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {columns.map((column) => (
+                <DropdownMenuItem
+                  key={column.id}
+                  onSelect={() => {
+                    const hiddenColumns = state.hiddenColumns.includes(column.id)
+                      ? state.hiddenColumns.filter((id) => id !== column.id)
+                      : [...state.hiddenColumns, column.id]
+                    updateState({ hiddenColumns })
+                  }}
+                >
+                  <input type="checkbox" checked={!state.hiddenColumns.includes(column.id)} className="mr-2" readOnly />
+                  {column.header}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       <div className="rounded-md border">
