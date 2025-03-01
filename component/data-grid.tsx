@@ -1,16 +1,16 @@
 "use client"
 
 import * as React from "react"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Button } from "@/components/ui/button"
 import { ChevronDown, ChevronUp, Settings } from "lucide-react"
 import type { DataGridProps } from "../types/grid"
 import { useGridState } from "../hooks/useGridState"
 import * as XLSX from "xlsx"
 import FileSaver from "file-saver"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../@/components/ui/table"
+import { Button } from "../@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../@/components/ui/dropdown-menu"
+import { Input } from "../@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../@/components/ui/select"
 
 export function DataGrid({ data, columns, defaultRowsPerPage = 20 }: DataGridProps) {
   const { state, updateState } = useGridState(columns)
