@@ -1,4 +1,4 @@
-import { DataGrid } from "../component/data-grid";
+import { DataGrid } from "../components/data-grid";
 import sampleData from "../sample-applications.json"; // Adjust the path as necessary
 
 const data = sampleData.map(item => ({
@@ -30,7 +30,7 @@ const columns = [
 
 export default function Home() {
   return (
-    <div className="container py-10">
+    <div className="py-10">
       <DataGrid data={data} columns={columns} />
     </div>
   );

@@ -58,22 +58,22 @@
   }
 }
 
-@layer base {
+/* @layer base {
   * {
-    @apply border-border;
+    @apply border;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
 
 
-
+/* 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
   }
-}
+} */
